@@ -2,31 +2,61 @@
 """
 Auth class for managing API authentication
 """
+
 from typing import List, TypeVar
 from flask import request
 
+User = TypeVar('User')
+
 
 class Auth:
+    """Class to handle API authentication
+    """
+
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """
-        Check if authentication is required for the given path.
+        """Check if authentication is required for the given path.
+
         Returns:
-            boolean
+            bool: True if authentication is required, False otherwise.
         """
-        return False
+        if path is None:
+            return True
+
+        if excluded_paths is None or excluded_paths == []:
+            return True
+
+        if path in excluded_paths:
+            return False
+
+        for excluded_path in excluded_paths:
+            if excluded_path.startswith(path):
+                return False
+            elif path.startswith(excluded_path):
+                return False
+            elif excluded_path[-1] == "*":
+                if path.startswith(excluded_path[:-1]):
+                    return False
+
+        return True
 
     def authorization_header(self, request=None) -> str:
-        """
-        Get the authorization header from the request.
+        """Get the authorization header from the request.
         Returns:
-            str: Always returns None for now.
+            str: The authorization header or None if not present.
         """
-        return None
+        if request is None:
+            return None
+        # get header from the request
+        header = request.headers.get('Authorization')
+
+        if header is None:
+            return None
+
+        return header
 
     def current_user(self, request=None) -> User:
-        """
-        Get the current user from the request.
+        """Get the current user from the request.
         Returns:
-            User: Always returns None for now.
+            User: Currently returns None.
         """
         return None
