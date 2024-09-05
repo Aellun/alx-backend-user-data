@@ -8,11 +8,10 @@ from api.v1.views import app_views
 from flask import Flask, jsonify, abort, request
 from flask_cors import CORS
 
-
 app = Flask(__name__)
 app.register_blueprint(app_views)
 
-# CORS config to allow requests
+# CORS configuration to allow requests
 # from any origin for the API routes
 CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
@@ -42,11 +41,15 @@ def before_request():
     if auth is None:
         return
 
-    excluded_list = ['/api/v1/status/',
-                     '/api/v1/unauthorized/',
-                     '/api/v1/forbidden/'
-                     ]
+    # Paths that do not require authentication
+    excluded_list = [
+        '/api/v1/status/',
+        '/api/v1/unauthorized/',
+        '/api/v1/forbidden/',
+        '/api/v1/auth_session/login/'
+    ]
 
+    # Check if the current path requires authentication
     if auth.require_auth(request.path, excluded_list):
         if auth.authorization_header(request) is None:
             abort(401, description="Unauthorized")
@@ -67,7 +70,9 @@ def not_found(error) -> str:
 @app.errorhandler(401)
 def unauthorized(error) -> str:
     """
-    Unauthorized handler
+    Unauthorized handler.
+    return:
+        jsonify({"error": "Unauthorized"}), 401
     """
     return jsonify({"error": "Unauthorized"}), 401
 
@@ -75,7 +80,9 @@ def unauthorized(error) -> str:
 @app.errorhandler(403)
 def forbidden(error) -> str:
     """
-    Forbidden handler
+    Forbidden handler.
+    return:
+        jsonify({"error": "Forbidden"}), 403
     """
     return jsonify({"error": "Forbidden"}), 403
 
