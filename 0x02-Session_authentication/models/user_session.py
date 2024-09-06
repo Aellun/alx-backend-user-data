@@ -3,6 +3,7 @@
 """
 import hashlib
 from models.base import Base
+from models.user_session import UserSession
 
 
 class User(Base):
@@ -57,3 +58,39 @@ class User(Base):
             return "{}".format(self.last_name)
         else:
             return "{} {}".format(self.first_name, self.last_name)
+
+    def create_user_session(self, session_id: str) -> UserSession:
+        """
+        Create a session for the user and store it in UserSession.
+        Returns:
+            UserSession: The created UserSession instance.
+        """
+        if session_id is None or self.id is None:
+            return None
+        user_session = UserSession(user_id=self.id, session_id=session_id)
+        user_session.save()
+        return user_session
+
+    def get_user_session(self, session_id: str) -> UserSession:
+        """
+        Fetches an existing session for the user.
+        Returns:
+            UserSession: The UserSession instance, or None if not found.
+        """
+        sessions = UserSession.search({"session_id": session_id,
+                                       "user_id": self.id})
+        if sessions and len(sessions) > 0:
+            return sessions[0]
+        return None
+
+    def destroy_user_session(self, session_id: str) -> bool:
+        """
+        Destroy the session by removing it from the UserSession model.
+        Returns:
+            bool: True if the session was destroyed, False otherwise.
+        """
+        session = self.get_user_session(session_id)
+        if session:
+            session.remove()
+            return True
+        return False
