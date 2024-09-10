@@ -9,10 +9,11 @@ from sqlalchemy.ext.declarative import declarative_base
 # Declare a base class for our models
 Base = declarative_base()
 
+
 class User(Base):
     """
     users table model
-    
+
     Attributes:
         id (int): The primary key of the user.
         email (str): The email of the user
@@ -33,4 +34,3 @@ class User(Base):
         String representation of the User instance.
         """
         return f"<User(id={self.id}, email={self.email})>"
-
