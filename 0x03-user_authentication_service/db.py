@@ -7,6 +7,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
 
 from user import Base, User
 
@@ -52,3 +54,39 @@ class DB:
 
         # Returns the newly created user object
         return new_user
+
+    def find_user_by(self, **kwargs) -> User:
+        """Finds the first user that matches the filters
+        specified in the keyword arguments.
+
+        Args:
+            kwargs: Arbitrary keyword arguments representing the filters.
+
+        Returns:
+            User: The first user found that matches the criteria.
+
+        Raises:
+            NoResultFound: If no user is found matching the criteria.
+            InvalidRequestError: If the query contains invalid fields.
+        """
+        # Ensure that the kwargs are valid columns of the User model
+        if not kwargs:
+            raise InvalidRequestError("No keyword arguments provided")
+
+        # Validate if the keyword args correspond
+        # to valid fields in the User model
+        for key in kwargs.keys():
+            if not hasattr(User, key):
+                raise InvalidRequestError(f"Invalid field: {key}")
+
+        # Attempt to filter and return
+        # the first user matching the criteria
+        try:
+            user = self._session.query(User).filter_by(**kwargs).first()
+            if user is None:
+                raise NoResultFound("No user found matching the criteria")
+            return user
+        except NoResultFound as e:
+            raise NoResultFound from e
+        except Exception as e:
+            raise InvalidRequestError(f"Error executing query: {e}")
