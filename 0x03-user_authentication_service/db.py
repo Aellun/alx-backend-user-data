@@ -90,3 +90,31 @@ class DB:
             raise NoResultFound from e
         except Exception as e:
             raise InvalidRequestError(f"Error executing query: {e}")
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """Updates a user's attributes and commits the changes
+        to the database.
+        Args:
+            user_id (int): The ID of the user to update.
+            kwargs: Arbitrary keyword arguments representing
+            the new attribute values.
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: If a keyword argument
+            does not correspond to a valid User attribute.
+        """
+        # Find the user by user_id
+        user = self.find_user_by(id=user_id)
+
+        # Loop through the keyword arguments and update
+        # the user attributes
+        for key, value in kwargs.items():
+            if hasattr(user, key):
+                setattr(user, key, value)
+            else:
+                raise ValueError(f"Invalid attribute: {key}")
+        # Commit the changes to the database
+        self._session.commit()
