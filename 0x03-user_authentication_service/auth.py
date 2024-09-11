@@ -69,15 +69,12 @@ class Auth:
             bool: True if the login is successful, False otherwise.
         """
         try:
-            # Attempt to locate the user by email
+            # try to locate the user by email
             user = self._db.find_user_by(email=email)
-
-            # Check if the provided password matches the hashed password
-            if bcrypt.checkpw(password.encode('utf-8'),
-                              user.hashed_password.encode('utf-8')):
-                return True
-            else:
-                return False
         except NoResultFound:
             # Return False if no user is found
             return False
+
+            # Check if the provided password matches the hashed password
+        return bcrypt.checkpw(password.encode('utf-8'),
+                              user.hashed_password.encode('utf-8'))
