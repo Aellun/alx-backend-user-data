@@ -25,9 +25,9 @@ def users():
     email = request.form.get("email")
     password = request.form.get("password")
 
-    # Validate that both email and password are provided
-    if not email or not password:
-        return jsonify({"message": "Missing email or password"}), 400
+    # # Validate that both email and password are provided
+    # if not email or not password:
+    #     return jsonify({"message": "Missing email or password"}), 400
 
     try:
         # Try to register the user using the Auth class
