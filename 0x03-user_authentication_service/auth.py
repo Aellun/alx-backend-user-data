@@ -4,7 +4,6 @@
 import bcrypt
 from db import DB
 from user import User
-from bcrypt import hashpw, gensalt
 from sqlalchemy.orm.exc import NoResultFound
 from typing import Union
 
