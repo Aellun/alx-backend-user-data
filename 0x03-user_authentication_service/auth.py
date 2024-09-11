@@ -161,15 +161,13 @@ class Auth:
         try:
             # Find the user by email
             user = self._db.find_user_by(email=email)
-        except NoResultFound:
+
             # if user is not found, Raise a ValueError
-            raise ValueError(f"User with email {email} does not exist")
-
-        # Generate a new UUID token
-        reset_token = self._generate_uuid()
-
-        # Update the user's reset_token field with the new token
-        self._db.update_user(user.id, reset_token=reset_token)
-
-        # Return the generated token
-        return reset_token
+            # Generate a new UUID token
+            # Update the user's reset_token field with the new token
+            # Return the generated token
+        except NoResultFound:
+            raise ValueError
+        else:
+            user.reset_token = _generate_uuid()
+            return user.reset_token
