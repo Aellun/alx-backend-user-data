@@ -8,6 +8,7 @@ from user import User
 from sqlalchemy.orm.exc import NoResultFound
 from typing import Union
 from uuid import uuid4
+from typing import Optional
 
 
 def _hash_password(password: str) -> str:
@@ -111,3 +112,23 @@ class Auth:
 
         # Return the new session ID
         return session_id
+
+    def get_user_from_session_id(
+            self, session_id: Optional[str]) -> Optional[User]:
+        """
+        Takes a session_id string and returns the corresponding User or None.
+        Returns:
+            Optional[User]: The user associated with the session ID,
+            or None if not found.
+        """
+        if session_id is None:
+            return None
+
+        try:
+            # find the user by session_id
+            user = self._db.find_user_by(session_id=session_id)
+        except NoResultFound:
+            # Return None if no user is found
+            return None
+
+        return user
