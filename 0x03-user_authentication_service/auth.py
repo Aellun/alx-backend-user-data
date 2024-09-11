@@ -7,6 +7,7 @@ from db import DB
 from user import User
 from sqlalchemy.orm.exc import NoResultFound
 from typing import Union
+from uuid import uuid4
 
 
 def _hash_password(password: str) -> str:
@@ -73,3 +74,13 @@ class Auth:
             return False
         # check validity of password
         return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password)
+
+
+    def _generate_uuid() -> str:
+        """
+        Generates a new UUID.
+
+        Returns:
+            str: A string representation of a new UUID.
+        """
+        return str(uuid.uuid4())
