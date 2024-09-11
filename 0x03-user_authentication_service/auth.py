@@ -75,7 +75,6 @@ class Auth:
         # check validity of password
         return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password)
 
-
     def _generate_uuid() -> str:
         """
         Generates a new UUID.
@@ -83,4 +82,5 @@ class Auth:
         Returns:
             str: A string representation of a new UUID.
         """
-        return str(uuid.uuid4())
+        id = uuid4()
+        return str(id)
