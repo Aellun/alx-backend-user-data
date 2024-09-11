@@ -15,7 +15,7 @@ def welcome():
 
 
 @app.route("/users", methods=["POST"])
-def users()-> str:
+def users() -> str:
     """
     POST /users:route to register a user.
 
